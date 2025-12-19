@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 Generátor Českých Rapů</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 Generátor Českých Rapů</h1>
+            <p class="subtitle">Generuj vlastní rapové texty v češtině</p>
+        </header>
+
+        <main>
+            <section class="generator-section">
+                <h2>Nastavení</h2>
+                
+                <div class="form-group">
+                    <label for="theme">Téma:</label>
+                    <select id="theme">
+                        <option value="city">🏙️ Město</option>
+                        <option value="money">💰 Peníze</option>
+                        <option value="love">❤️ Láska</option>
+                        <option value="party">🎉 Párty</option>
+                        <option value="bragging">🌟 Chvála</option>
+                        <option value="anger">😤 Vztek</option>
+                        <option value="success">🏆 Úspěch</option>
+                        <option value="hiphop">🎧 Hip-hop</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lines">Počet řádků:</label>
+                        <input type="number" id="lines" min="4" max="32" value="8" step="2">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tempo">Tempo (BPM):</label>
+                        <input type="number" id="tempo" min="60" max="160" value="95" step="5">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="generateBtn" class="btn btn-primary">
+                        🎤 Generuj Rap
+                    </button>
+                    <button id="copyBtn" class="btn btn-secondary" disabled>
+                        📋 Kopírovat
+                    </button>
+                    <button id="downloadBtn" class="btn btn-secondary" disabled>
+                        ⬇️ Stáhnout
+                    </button>
+                </div>
+            </section>
+
+            <section class="output-section">
+                <h2>Vygenerovaný Text</h2>
+                
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Generuji rap...</p>
+                </div>
+
+                <div id="output" class="output-box">
+                    <p class="placeholder">Klikni na "Generuj Rap" pro vytvoření textu...</p>
+                </div>
+
+                <div id="metadata" class="metadata" style="display: none;">
+                    <div class="meta-item">
+                        <span class="meta-label">Téma:</span>
+                        <span id="metaTheme" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Počet řádků:</span>
+                        <span id="metaLines" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Tempo:</span>
+                        <span id="metaTempo" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Trvání:</span>
+                        <span id="metaDuration" class="meta-value">-</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Rýmové schéma:</span>
+                        <span id="metaRhyme" class="meta-value">-</span>
+                    </div>
+                </div>
+
+                <div id="error" class="error-box" style="display: none;">
+                    <p id="errorMsg"></p>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h3>ℹ️ O Aplikaci</h3>
+                <p>Tato aplikace generuje rapové texty v češtině na základě vybraného tématu. 
+                   Každý vygenerovaný text je unikátní a kombinuje českou slovní zásobu se slangovými výrazy.</p>
+                <p><strong>Témata:</strong> Město, Peníze, Láska, Párty, Chvála, Vztek, Úspěch, Hip-hop</p>
+                <p><strong>Tempo:</strong> Nastavitelné od 60 do 160 BPM pro různé styly rapu.</p>
+            </section>
+        </main>
+
+        <footer>
+            <p>🎤 Czech Rap Generator v1.0 | Vytvořeno s láskou na Internetu</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

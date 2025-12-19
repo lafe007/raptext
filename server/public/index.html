@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 Český Rap Generátor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #00ffcc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .subtitle {
+            color: #00ffcc;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.9em;
+            color: #00ffcc;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        input[type="number"],
+        select {
+            padding: 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid #00ff88;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 15px 25px;
+            background: linear-gradient(45deg, #00ff88, #00ffcc);
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 255, 136, 0.2);
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .output {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            animation: fadeIn 0.6s ease-out;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .output.hidden {
+            display: none;
+        }
+
+        .output-header {
+            color: #00ffcc;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .copy-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            background: rgba(0, 255, 136, 0.8);
+        }
+
+        .copy-btn:hover {
+            background: #00ff88;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+            display: none;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .info-box {
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #00ffcc;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .controls,
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 5px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #00ffcc;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 ČESKÝ RAP GENERÁTOR 🎤</h1>
+            <p class="subtitle">Generuj autorské rapové texty v češtině</p>
+        </header>
+
+        <div class="info-box">
+            <h3>ℹ️ Jak na to?</h3>
+            <p>Vyber typ obsahu, který chceš generovat, a stiskni tlačítko. Můžeš také zadat seed pro reprodukovatelné výsledky. Vše probíhá v reálném čase!</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">Vygenerováno</div>
+                <div class="stat-value" id="generatedCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Typů textu</div>
+                <div class="stat-value">5</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Verze</div>
+                <div class="stat-value">1.0</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="seed">Seed (volitelné)</label>
+                <input type="number" id="seed" placeholder="Ponech prázdné pro náhodný">
+            </div>
+            <div class="control-group">
+                <label for="verseCount">Počet veršů</label>
+                <input type="number" id="verseCount" min="1" max="10" value="3">
+            </div>
+            <div class="control-group">
+                <label for="lineCount">Řádků na verš</label>
+                <input type="number" id="lineCount" min="1" max="16" value="4">
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="generateLine()">🎵 Jedna linka</button>
+            <button onclick="generateVerse()">📝 Verse</button>
+            <button onclick="generateChorus()">🎤 Chorus</button>
+            <button onclick="generateSong()">🎶 Kompletní skladba</button>
+            <button onclick="generateFormattedSong()">📄 Formátovaná skladba</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generuji...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="output hidden" id="output">
+            <div class="output-header" id="outputHeader"></div>
+            <div id="outputContent"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">📋 Kopírovat</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/api';
+        let generatedCount = 0;
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('error').classList.remove('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        function showOutput(title, content) {
+            const output = document.getElementById('output');
+            const header = document.getElementById('outputHeader');
+            const contentDiv = document.getElementById('outputContent');
+            
+            header.textContent = title;
+            contentDiv.textContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+            output.classList.remove('hidden');
+            generatedCount++;
+            document.getElementById('generatedCount').textContent = generatedCount;
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = '❌ Chyba: ' + message;
+            error.classList.add('active');
+            hideLoading();
+        }
+
+        async function generateLine() {
+            showLoading();
+            try {
+                const seed = document.getElementById('seed').value;
+                const url = seed ? `${API_URL}/generate/line?seed=${seed}` : `${API_URL}/generate/line`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showOutput('🎵 Vygenerovaná linka', data.data.text);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError((error as Error).message);
+            }
+            hideLoading();
+        }
+
+        async function generateVerse() {
+            showLoading();
+            try {
+                const seed = document.getElementById('seed').value;
+                const lineCount = document.getElementById('lineCount').value;
+                const url = seed ? `${API_URL}/generate/verse?seed=${seed}&lines=${lineCount}` : `${API_URL}/generate/verse?lines=${lineCount}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const verse = data.data;
+                    const text = verse.lines.map((l: any) => l.text).join('\n');
+                    showOutput(`📝 Verse - Téma: ${verse.theme}`, text);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError((error as Error).message);
+            }
+            hideLoading();
+        }
+
+        async function generateChorus() {
+            showLoading();
+            try {
+                const seed = document.getElementById('seed').value;
+                const url = seed ? `${API_URL}/generate/chorus?seed=${seed}` : `${API_URL}/generate/chorus`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showOutput('🎤 Chorus', data.data);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError((error as Error).message);
+            }
+            hideLoading();
+        }
+
+        async function generateSong() {
+            showLoading();
+            try {
+                const seed = document.getElementById('seed').value;
+                const verseCount = document.getElementById('verseCount').value;
+                const url = seed ? `${API_URL}/generate/song?seed=${seed}&verses=${verseCount}` : `${API_URL}/generate/song?verses=${verseCount}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showOutput('🎶 Kompletní skladba: ' + data.data.title, JSON.stringify(data.data, null, 2));
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError((error as Error).message);
+            }
+            hideLoading();
+        }
+
+        async function generateFormattedSong() {
+            showLoading();
+            try {
+                const seed = document.getElementById('seed').value;
+                const verseCount = document.getElementById('verseCount').value;
+                const url = seed ? `${API_URL}/generate/song/formatted?seed=${seed}&verses=${verseCount}` : `${API_URL}/generate/song/formatted?verses=${verseCount}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showOutput('📄 Formátovaná skladba', data.data);
+                } else {
+                    showError(data.error);
+                }
+            } catch (error) {
+                showError((error as Error).message);
+            }
+            hideLoading();
+        }
+
+        function copyToClipboard() {
+            const output = document.getElementById('outputContent');
+            const text = output.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Zkopírováno do schránky!');
+            }).catch(err => {
+                console.error('Chyba při kopírování:', err);
+            });
+        }
+
+        // Test API connectivity on load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_URL.split('/api')[0]}/health`);
+                if (response.ok) {
+                    console.log('✅ Server je připojen');
+                }
+            } catch (error) {
+                console.warn('⚠️ Server není dostupný - zajisti že běží na http://localhost:3001');
+            }
+        });
+    </script>
+</body>
+</html>
