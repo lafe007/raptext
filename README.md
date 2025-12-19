@@ -1,183 +1,346 @@
-# 🎤 Generátor Českých Rapů
+# 🎤 RapText - Generátor Českých Rapů
 
-Webová aplikace pro generování originálních rapových textů v češtině!
+Aplikace která generuje **autentické, logicky strukturované rapové texty v češtině** s reálnými českými slovy, slangem a dobrou lyrikou.
 
-## ✨ Features
+[![GitHub](https://img.shields.io/badge/GitHub-lafe007/raptext-blue?logo=github)](https://github.com/lafe007/raptext.git)
+[![License](https://img.shields.io/badge/License-MIT-green)]()
+[![Docker](https://img.shields.io/badge/Docker-Compose-blue?logo=docker)]()
 
-- 🎯 8 různých témat (Město, Peníze, Láska, Párty, Chvála, Vztek, Úspěch, Hip-hop)
-- 🎵 Nastavitelné tempo (60-160 BPM)
-- 📊 Rýmové schéma a metadata
-- 📋 Kopírování do schránky
-- ⬇️ Export jako TXT soubor
-- 🚀 Snadný deployment v Dockeru
+## ✨ Vlastnosti
 
-## 📋 Požadavky
-
-- Docker
-- Docker Compose
+- 🎵 **Generování smysluplných rapů** - nikoliv jen náhodná slova
+- 🇨🇿 **Čeština na prvním místě** - autentické české texty
+- 📝 **8 tématických směrů** - Město, Peníze, Láska, Párty, Chvála, Vztek, Úspěch, Hip-hop
+- 🔊 **Nastavitelné tempo** - 60-160 BPM
+- 🎨 **Web UI** - jednoduché a stylové rozhraní
+- 🐳 **Docker** - jednoduché nasazení
+- 📊 **Metadata** - analýza rýmů, délka, tempo
 
 ## 🚀 Spuštění
 
-### Pomocí Docker Compose
+### Rychlestart s Docker
 
 ```bash
-cd rap-generator
-docker-compose up --build
+git clone https://github.com/lafe007/raptext.git
+cd raptext
+docker-compose up -d
 ```
 
-Aplikace bude dostupná na `http://localhost:8080`
+Aplikace bude dostupná na:
+- **Web UI**: http://localhost:8080
+- **API**: http://localhost:5000/api
 
-### Nebo ručně
+### Lokální spuštění
 
-**Backend:**
+#### Backend (Node.js + Express)
+
 ```bash
 cd backend
 npm install
 npm run build
 npm start
+# Server běží na http://localhost:5000
 ```
 
-**Frontend:**
+#### Frontend (Nginx)
+
 ```bash
-cd frontend
-# Prostě otevřít index.html v prohlížeči
+# Lze servírovat jakýmkoliv HTTP serverem, např.:
+python3 -m http.server 8000 --directory frontend
+# Pak jít na http://localhost:8000
 ```
 
-## 🔗 API Endpointy
+## 📡 API Dokumentace
 
-### Generate Rap
+### Health Check
+
+```bash
+GET /api/health
+```
+
+**Odpověď:**
+```json
+{
+  "status": "OK",
+  "message": "Rap Generator Server is running!",
+  "timestamp": "2025-12-19T10:00:00.000Z"
+}
+```
+
+### Dostupná Témata
+
+```bash
+GET /api/themes
+```
+
+### Generování Rapu
+
 ```bash
 POST /api/generate
 Content-Type: application/json
 
 {
-  "theme": "city",      // city, money, love, party, bragging, anger, success, hiphop
-  "lines": 8,           // 4-32
-  "tempo": 95           // 60-160 BPM
+  "theme": "city",
+  "lines": 8,
+  "tempo": 95
 }
 ```
 
-### Get Themes
-```bash
-GET /api/themes
+**Parametry:**
+- `theme` (string): `city`, `money`, `love`, `party`, `bragging`, `anger`, `success`, `hiphop`
+- `lines` (number): 4-32 (počet řádků)
+- `tempo` (number): 60-160 BPM
+
+**Odpověď:**
+```json
+{
+  "success": true,
+  "data": {
+    "text": "  Chci víc než byt, víc než Libeň\n  Ty centrum máš rád, já to znám\n  ...",
+    "theme": "city",
+    "lines": 8,
+    "rhymeScheme": "abcbdbef",
+    "bpm": 95,
+    "duration": "3:00"
+  },
+  "timestamp": "2025-12-19T10:00:00.000Z"
+}
 ```
 
-### Health Check
-```bash
-GET /api/health
-```
+## 📊 Příklady Vygenerovaného Rapu
 
-### API Info
-```bash
-GET /api/info
-```
-
-## 📁 Struktura Projektu
+### Téma: Město
 
 ```
-rap-generator/
-├── backend/
+  Chci víc než byt, víc než Libeň
+  Ty centrum máš rád, já to znám
+  Chci víc než Praha, víc než Praha
+  Ty Vinohrady máš rád, já to znám
+  Chci víc než Vinohradinice, víc než centrum
+  Ty Vinohradinice máš rád, já to znám
+  Jsem jako byt, silný jak Vinohradinice
+  město tady dělám svůj styl
+
+[Hook] Yo, Libeň, to je to
+[Hook] Yo, Libeň, to je to
+[Hook] Yo, Libeň, to je to
+
+[Outro] Na svidanou...
+```
+
+- **Rýmovací schéma**: AABB
+- **Tempo**: 95 BPM
+- **Délka**: 3:00
+
+## 🏗️ Architektura
+
+```
+raptext/
+├── backend/                 # Express API server
 │   ├── src/
-│   │   ├── server.ts          - Express server
+│   │   ├── server.ts       # Main Express app
 │   │   ├── generators/
-│   │   │   └── rapGenerator.ts - Generátor rapu
-│   │   └── utils/
-│   ├── data/
-│   │   └── rhymes.ts          - Databáze rým a slov
+│   │   │   └── rapGenerator.ts  # Core generation
+│   │   └── rhymes.ts       # Czech vocabulary
 │   ├── Dockerfile
 │   └── package.json
-├── frontend/
-│   ├── index.html             - Hlavní stránka
-│   ├── style.css              - Styly
-│   ├── app.js                 - JavaScript logika
-│   ├── nginx.conf             - Nginx konfigurace
+│
+├── frontend/               # Nginx + HTML/CSS/JS
+│   ├── index.html
+│   ├── app.js
+│   ├── style.css
+│   ├── nginx.conf
 │   └── Dockerfile
-├── docker-compose.yml         - Docker Compose orchestrace
-└── README.md                  - Tato dokumentace
+│
+├── docker-compose.yml      # Multi-container setup
+└── README.md
 ```
 
-## 🛠️ Vývoj
+### Backend
 
-### Backend Development
+- **Technologie**: Node.js 18 Alpine + Express
+- **Port**: 5000
+- **TypeScript**: Kompiluje do dist/
+- **Algoritmus**: Šablonové věty + české slovo databáze
+
+### Frontend
+
+- **Technologie**: Nginx Alpine + HTML5/CSS3/Vanilla JS
+- **Port**: 8080
+- **Proxy**: Směruje API na backend:5000
+- **UI**: Responsivní design, copy/download
+
+## 🧠 Jak to Funguje
+
+### Generování Algoritmu
+
+1. **Šablona** - Náhodná volba z 5+ větnýchšablon
+2. **Slova** - Tématická slova pro dané téma
+3. **Verše** - Couplet (2 řádky s rýmem) - strukturace
+4. **Hook** - Opakující se refrén (3x)
+5. **Outro** - Závěrečná linka
+
+### Příkladšablon
+
+```
+"V {1} žiju, vidím {2}, {3}"
+"{1} na ulici, {2} v noci, já"
+"Chci víc než {1}, víc než {2}"
+"Jsem jako {1}, silný jak {2}"
+"{1} nebo {2}? Vůbec ne"
+```
+
+### Česká Slovní Zásoba
+
+- **Město**: Praha, ulice, byt, dům, řeka, most, park, Vinohradinice, Žižkov
+- **Peníze**: koruna, balík, kešta, hastra, pasta, prodej, vezmi
+- **Láska**: láska, srdce, polibek, objetí, oči, milá, vášeň
+- **Party**: diskotéka, hudba, tanec, zábava, alkohol, shot
+- **Hip-hop**: beat, rým, mikrofon, DJ, vinyl, refřén, verš
+
+Plus 100+ českých slangových výrazů.
+
+## 🐳 Docker
+
+### Build & Run
+
 ```bash
-cd backend
-npm install
-npm run dev        # Spuštění s hot-reload
-npm run build      # Build TypeScriptu
+# Všechno
+docker-compose up -d
+
+# Jednotlivě
+docker-compose up -d backend
+docker-compose up -d frontend
+
+# Logs
+docker-compose logs -f backend
+
+# Stop
+docker-compose down
 ```
 
-### Frontend Development
+### Rebuilding (bez cache)
+
 ```bash
-# Otevřít frontend/index.html v editoru a spustit live server
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
 ```
-
-## 🐳 Docker Obrazy
-
-- **Backend**: Node.js 18 Alpine
-- **Frontend**: Nginx Alpine
-
-## 🌐 Porty
-
-- Frontend: `8080` (http://localhost:8080)
-- Backend API: `3001` (http://localhost:3001)
-
-## 📝 Témata
-
-- 🏙️ **Město** - Rap o městě, ulicích a městském životě
-- 💰 **Peníze** - Rap o penězích, bohatství a financích
-- ❤️ **Láska** - Rap o lásce, vztazích a emocích
-- 🎉 **Párty** - Rap o zábavě, tanci a partě
-- 🌟 **Chvála** - Rap o sebě a vlastních schopnostech
-- 😤 **Vztek** - Agresivní rap o hnevu a zuřivosti
-- 🏆 **Úspěch** - Rap o vítězství, sláve a titulek
-- 🎧 **Hip-hop** - Rap o hip-hopové kultuře a hudbě
 
 ## 🔧 Konfigurace
 
-### Proměnné prostředí
+### Backend Environment
 
-Backend:
-- `NODE_ENV` - Prostředí (production/development)
-- `PORT` - Port serveru (default: 3001)
-
-## 📊 Příklady Výstupu
-
-```
-[Verse]
-  Praha ulice byt dům řeka most park město
-  koruna balík kešta hastra pasta chci mám
-  ulice byt dům řeka most park město centrum
-  
-[Hook]
-[Hook] Yeah, město
-[Hook] Yeah, město
-[Hook] Yeah, město
-
-[Verse]
-  nemám kolik stojí dej vezmi prodej ulice
-  byt dům řeka most park město centrum Vinohrady
-  
-[Outro] To je vše...
+```bash
+PORT=5000              # Default 5000
+NODE_ENV=production
 ```
 
-## 🎯 Budoucí Rozšíření
+### Porty (docker-compose.yml)
 
-- [ ] Více témat
-- [ ] Exporty v dalších formátech (PDF, MP3)
-- [ ] Herní režim (quiz)
-- [ ] Skladovací síť rapů
-- [ ] Sdílení přes sociální sítě
-- [ ] Multilinguální podpora
+```yaml
+backend:
+  ports:
+    - "5000:5000"      # External:Internal
+frontend:
+  ports:
+    - "8080:80"
+```
 
-## 📄 Licence
+## 📦 Instalace
 
-MIT
+### Předpoklady
+
+- Docker & Docker Compose
+- Nebo: Node.js 18+, npm, Nginx
+
+### Lokální vývoj
+
+```bash
+# Backend
+cd backend
+npm install
+npm run build
+npm start
+
+# Frontend (v novém terminále)
+cd frontend
+python3 -m http.server 8000
+```
+
+## 🚀 Nasazení
+
+### VPS/VM
+
+```bash
+# SSH
+ssh user@vm
+
+# Clone & Start
+git clone https://github.com/lafe007/raptext.git
+cd raptext
+docker-compose up -d
+
+# Verify
+docker-compose ps
+curl http://localhost:5000/api/health
+```
+
+### Nginx Reverse Proxy
+
+```nginx
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://localhost:8080;
+    }
+
+    location /api/ {
+        proxy_pass http://localhost:5000/api/;
+    }
+}
+```
+
+## 🐛 Troubleshooting
+
+### Build error: "Cannot find module"
+
+```bash
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Port Already In Use
+
+```bash
+lsof -i :5000
+kill -9 PID
+```
+
+### Frontend nemůže kontaktovat API
+
+Zkontroluj nginx.conf:
+```nginx
+proxy_pass http://backend:5000/api/;
+```
+
+## 📝 Licence
+
+MIT License
 
 ## 👨‍💻 Autor
 
-Vytvořeno s 💜 pro českou rap komunitu
+**RapText Development** - Czech Rap Generator
+
+## 🔗 Odkazy
+
+- **GitHub**: https://github.com/lafe007/raptext.git
+- **API**: http://localhost:5000
+- **Web**: http://localhost:8080
 
 ---
 
-**Verze:** 1.0.0  
-**Status:** Active Development 🚀
+**"V kódě žiju, vidím budoucnost, to je můj cíl!"** 🎤
